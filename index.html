@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>Sequenceur</title>
+<link rel="stylesheet" href="sequenceur.css"/>
+<script src="lib/jquery.js"></script>
+<script src="src/Cellule.js"></script>
+<script src="src/Sequenceur.js"></script>
+
+<div id="grille">
+</div>
+
+<script>
+    var sons = [
+            new Audio("sons/Percussion1.wav"),
+            new Audio("sons/Percussion2.wav"),
+            new Audio("sons/Percussion3.wav"),
+            new Audio("sons/Percussion4.wav"),
+            new Audio("sons/Percussion5.wav"),
+            new Audio("sons/Percussion6.wav"),
+            new Audio("sons/Percussion7.wav"),
+            new Audio("sons/Percussion8.wav"),
+            new Audio("sons/Percussion9.wav"),
+            new Audio("sons/Percussion10.wav"),
+            new Audio("sons/Percussion11.wav"),
+            new Audio("sons/Percussion12.wav"),
+            new Audio("sons/Percussion13.wav"),
+            new Audio("sons/Percussion14.wav"),
+            new Audio("sons/Percussion15.wav"),
+            new Audio("sons/Percussion16.wav")
+        ],
+        systemeSon = {
+            joueSon: function (idCellule) {
+                sons[idCellule].play();
+            }
+        };
+
+    var initGrille = function (nbColonnes, nbLignes) {
+        var $grille = $("#grille"),
+            cellules = [];
+        for (i = 0; i < nbColonnes; i++) {
+            var colonne = [];
+            $grille.append("<div class='colonne'></div>");
+            var $colonne = $("#grille .colonne").last();
+            for (j = 0; j < nbLignes; j++) {
+                $colonne.append("<div class='cellule'></div>");
+                colonne.push(creeCellule(j, systemeSon));
+            }
+            cellules[i] = colonne;
+        }
+
+        var sequenceur = creeSequenceur(nbColonnes, cellules);
+        $(".cellule").click(function () {
+            $(this).toggleClass("active");
+            sequenceur.basculeCellule($(this).parent().index(), $(this).index());
+        });
+
+        sequenceur.surChangement(function () {
+            $("#courante").removeAttr("id");
+            $(".colonne").get(sequenceur.colonneCourante()).id = "courante";
+        });
+
+        setInterval(function () {
+            sequenceur.tick();
+        }, 100);
+    };
+
+    initGrille(16, 16);
+</script>
